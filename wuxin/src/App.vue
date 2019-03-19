@@ -1,50 +1,54 @@
-<!--1模板 html结构 只能包含根节点在 2.x之后-->
-<template>
-  <div id="app">
-  	<ul>
-  				<li><router-link to="/">Home</router-link></li>
-  				<li><router-link to="/helloworld">helloworld</router-link></li>
-  				
-  				<!--
-  							<li><a href="/">Home</a></li>
-  							<li><a href="/helloworld">hello</a></li>
-                a 标签不管运行多少次项目都会重新进行加载 不利于项目的运行
-                  -->
-  			</ul>	
-  			<router-view></router-view>
-  			
-	</div>
 
+<template>
+  <div id="app" class="container row">
+  	 <h1 class="col-md-4  col-md-offset-6">在线翻译</h1>
+  	 <h5 class="text-muted col-md-4  col-md-offset-9">简单/易用/便捷</h5>
+  	 <translateForm v-on:formSubmit="translateText" class="text-muted col-md-4  col-md-offset-6"></translateForm>
+  	 <translateOutput v-text="TranslatedText" class="answer"></translateOutput>
+  
+	</div>
 </template>
-<!--2行为： 处理逻辑-->
+
 <script>
+import TranslateForm from './components/TranslateForm'
+import TranslateOutput from './components/TranslateOutput'
 export default ({
   name: 'app',
   data(){
     return{
-   
+   			TranslatedText:"",
     }
   },
   methods:{
+     translateText:function(text,language){
+//   		alert(text)
+				this.$http.get('https://translate.yandex.net/api/v1.5/tr.json/translate?key=trnsl.1.1.20190319T073526Z.e62a308fee515955.5bb1cbfb690bf01d24272bf9873099c116f10582&lang='+language+'&text='+text)
+				.then((response)=>{
+					console.log(response.body.text[0]);
+   			this.TranslatedText = response.body.text[0];
+				})
+     }
      
   },
   components:{
-   
-  }
-  //局部起名上面调用 但是不能起跟系统标签一样的名字  可以不起名
- 
+	 "translateForm":TranslateForm ,
+	 "translateOutput":TranslateOutput,
+  },
 })
 
 
 </script>
 <!--3样式 ：解决样式-->
 <style scoped>
-    h3{
-    color:red;
+   h5{
+    	font-size: 20px;
+    	padding: 20px 0;
     }
-    li{
-    
-    background:pink;
-    list-style:none;
-    }
+   .answer{
+   	position: absolute;
+   	top: 310px;
+   	left: 700px;
+   	font-size: 20px;
+   	color: darkblue;
+   }
 </style>
